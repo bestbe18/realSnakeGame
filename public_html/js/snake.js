@@ -1,3 +1,7 @@
+/* ----------------------------------------------------------------------------
+ * Variable
+ *  ---------------------------------------------------------------------------
+ */ 
 
 var snake; // store position of the snake on the screen
 var snakeLength; // store the length of the snake: how long it is on the screen
