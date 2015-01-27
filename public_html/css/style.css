@@ -1,5 +1,5 @@
-body{
-    margin: 0;
+body{ 
+    margin: 0; // set margin to zero to remove white areas
     padding: 0;
 }
 

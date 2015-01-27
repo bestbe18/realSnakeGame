@@ -10,10 +10,10 @@ var screenHeight; // store the height of our screen so we have access to them
 gameInitialize();
 snakeInitialize();
 gameDraw();
+snakeDraw();
 
 //*initialize our snake, game look, size of our screen
-function gameInitialize()
-{
+function gameInitialize() {
     //variable canvas store document element on the website
     // assign canvas to object on the HTML page
     var canvas = document.getElementById("game-screen");
@@ -23,7 +23,7 @@ function gameInitialize()
     //assign the height and width of the browser window
     // getting the whole width of the window and store it in screenWidth
     screenWidth = window.innerWidth;
-    screenHeight = window.innerHeight
+    screenHeight = window.innerHeight;
     // to make sure that the whole canvas is the whole screen
     canvas.width = screenWidth;
     canvas.height = screenHeight;    
@@ -40,29 +40,29 @@ function gameDraw()
     context.fillRect(0, 0, screenWidth, screenHeight);    
 }
 //initialize all the variables for the snake and setting to values and modify later
-function snakeInitialize()
+function snakeInitialize(){
     snake = [];
     snakeLength = 15;
-    snakeSize = 20;
+    snakeSize = 100;
     
-    for(var index = 0; index < snakeLength; index++) {
+    for(var index = snakeLength = 1; index >= 0; index--) {
         snake.push( {
                 x: index,
                 y: 0
             });       
     }
-{
-    
 }
 //anything has to do with drawing the snake
-function snakeDraw()
-{
-    
+function snakeDraw(){
+    for(var index = 0; index < snake.length; index++) {
+        context.fillStyle = "white";
+        context.fillRect(snake[index].x * snakeSize, snake[index].y * snakeSize, snakeSize, snakeSize);
+    }
 }
 //update the snake so the snake can move on the screen
-function snakeUpdate()
-{
-    
+function snakeUpdate() {
+    var snakeHeadX = snake[0].x;
+    var snakeHeadY = snake[0].y;
 }
 
 
