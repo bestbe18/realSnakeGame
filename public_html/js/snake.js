@@ -6,12 +6,18 @@
 var snake; // store position of the snake on the screen
 var snakeLength; // store the length of the snake: how long it is on the screen
 var snakeSize; //how big it is the snake on the screen in pixel
+var snakeDirection;
 
 var food;
 
 var context; //
 var screenWidth; // store width of our screen
 var screenHeight; // store the height of our screen so we have access to them
+
+/* -------------------------------------------------------------------------
+ * Executing Game Code
+ * -------------------------------------------------------------------------
+ */ 
 
 gameInitialize();
 snakeInitialize();
@@ -55,6 +61,7 @@ function snakeInitialize(){
     snake = [];
     snakeLength = 5;
     snakeSize = 20;
+    snakeDirection = "down";
     
     for(var index = snakeLength; index >= 0; index--) {
         snake.push( {
@@ -75,7 +82,9 @@ function snakeUpdate() {
     var snakeHeadX = snake[0].x;
     var snakeHeadY = snake[0].y;
     
-    snakeHeadX++;
+    if(snakeDirection == "down") {
+        snakeHeadY++;
+    }
     
     var snakeTail = snake.pop();
     snakeTail.x = snakeHeadX;
@@ -83,14 +92,28 @@ function snakeUpdate() {
     snake.unshift(snakeTail);
 }
 
+/* --------------------------------------------------------------
+ * Food Functions
+ * --------------------------------------------------------------
+ */
+
 function foodInitialize() {
     food = {
         x: 0,
         y: 0
     };
+    setFoodPosition();
 }
 
 function foodDraw() {
     context.fillStyle = "white";
     context.fillRect(food.x, food.y, snakeSize, snakeSize);
+}
+
+function setFoodPosition() {
+    var randomX = Math.floor(Math.random() * screenWidth);
+    var randomY =  Math.floor(Math.random() * screenHeight);
+
+     food.x = randomX;
+     food.y = randomY;
 }
