@@ -22,7 +22,7 @@ var screenHeight; // store the height of our screen so we have access to them
  * -------------------------------------------------------------------------
  */ 
 
-gameInitialize();
+gameInitialize(); // This executes the function gameInitalize without arguements.
 snakeInitialize();
 foodInitialize();
 //gameLoop run at a set interval over and over again
@@ -32,45 +32,46 @@ setInterval(gameLoop, 1000/30);
 // time in our code
 // use functions to modify this information(variable)
 
-
+// creating functions for the game.
 //*initialize our snake, game look, size of our screen
-function gameInitialize() {
+function gameInitialize() { // this function starts the game.
     //variable canvas store document element on the website
     // assign canvas to object on the HTML page
-    var canvas = document.getElementById("game-screen");
+    var canvas = document.getElementById("game-screen"); // returns a reference to an element by it's ID using the DOM structure.
     //context is going to enable to draw 2D thing on the screen
     // use context variable to draw rectangel, line,..
     // get the context of the canvas
-    context = canvas.getContext("2d");
+    context = canvas.getContext("2d"); // assigning a value to the variable context. It will allow it to draw in 2d.
     //assign the height and width of the browser window
     // getting the whole width of the window and store it in screenWidth
-    screenWidth = window.innerWidth;
-    screenHeight = window.innerHeight;
+    screenWidth = window.innerWidth; // this window function gives the width of the screen.
+    screenHeight = window.innerHeight; // this window function gives the height of the screen.
     // use that information to store within the Width of the canvas
     // to make sure that the whole canvas is the whole screen
-    canvas.width = screenWidth;
-    canvas.height = screenHeight;
+    canvas.width = screenWidth; // stores the screen width in canvas.width
+    canvas.height = screenHeight; // stores the screen height in canvas.height
     
     // use keydown event (if the key has been pressed)
-    document.addEventListener("keydown", keyboardHandler );
+    document.addEventListener("keydown", keyboardHandler);
     
 }
 //calling extra function in here
-function gameLoop() 
+function gameLoop() // this function runs the game at all times.
 {
     //background being drawn, snake position being updated, snake being drawn on the screen
     gameDraw();
     snakeUpdate();
     snakeDraw();
+    
     foodDraw();
 
    
 }
 // draw our game
-function gameDraw()
+function gameDraw()// this function draws the game.
 {
-    context.fillStyle = "rgb(180, 250, 213)";
-    context.fillRect(0, 0, screenWidth, screenHeight);
+    context.fillStyle = "rgb(180, 250, 213)"; // this fills the canvas with a ligh blue color.
+    context.fillRect(0, 0, screenWidth, screenHeight); // This makes a rectangle from X = 0 and Y = 0 with the width of screenWidth and the height of screenHeight.
 }
 //initialize all the variables for the snake and setting to values and modify later
 function snakeInitialize(){
@@ -79,7 +80,7 @@ function snakeInitialize(){
     snakeSize = 20; // size of our snake is 20 pixels
     snakeDirection = "down"; // tell the game which direction of our snake is moving
     
-    for(var index = snakeLength; index >= 0; index--) {
+    for(var index = snakeLength-1; index >= 0; index--) {
         snake.push( {
                 x: index,
                 y: 0
@@ -100,12 +101,19 @@ function snakeUpdate() {
     var snakeHeadY = snake[0].y;
     //moving snake to the right by increasing the x-position by 1
     //conditional statement (if) determine if we go up or down
-    if(snakeDirection == "down") {
-        snakeHeadY++;
+    if(snakeDirection == "down") { // check if snake is going down
+        snakeHeadY++; // snake position moves down
     }
-    else {
+    else if(snakeDirection == "right"){ // check if snake is going right
         snakeHeadX++; // snake position moves to the right
     }
+    else if(snakeDirection == "up"){ // check if snake is going up
+        snakeHeadY--; // snake position moves up
+    }
+    else if(snakeDirection == "left"){ // check if snake is going left
+        snakeHeadX--; // snake position moves to the left
+    }
+    checkFoodCollisions(snakeHeadX,snakeHeadY);
     //asking a program a question(comparing the variable to the string)
     //remove element in the array and store in snaketail
     var snakeTail = snake.pop();
@@ -132,7 +140,8 @@ function foodInitialize() {
 // draw our food
 function foodDraw() {
     context.fillStyle = "white";
-    context.fillRect(food.x * snakeSize, food.Y *  snakeSize, snakeSize, snakeSize);
+    // context.fillRect(food.x * snakeSize, food.Y *  snakeSize, snakeSize, snakeSize);
+    context.fillRect(food.x * snakeSize, food.y * snakeSize, snakeSize, snakeSize);
 }
 
 function setFoodPosition() {
@@ -148,17 +157,42 @@ function setFoodPosition() {
     food.y = Math.floor (randomY / snakeSize);
 }
 
+
 /* --------------------------------------------------------------------------
  * Input Functions
  * --------------------------------------------------------------------------
  */
 //for handling keyboard event
-function keyboardHandler(event) { // keyCode 39 mean right direction 
+function keyboardHandler(event) { // this functions runs if the player presses the keyboard
     console.log(event);
-    if(event.keyCode == "39") {
-         snakeDirection = "right";
-     }
-     else if (event.keyCode == "40") { // keyCode 40 means down direction
-         snakeDirection = "down";
-}
+    
+    if (event.keyCode == "39") { // if the user presses a right button, then the player will be right
+        snakeDirection = "right";
+    }
+    else if(event.keyCode == "40") { // if the user presses a down button, then the player will be down 
+        snakeDirection = "down";
+    }
+    else if(event.keyCode == "38") { // if the user presses a up, then the player will be up
+        snakeDirection = "up";
+    }
+    else if (event.keyCode == "37") { // if the user presses a left button, then the player will be left
+        snakeDirection = "left";
+    }
+} 
+
+/* --------------------------------------------------------------------
+ * Collision Handling
+ * --------------------------------------------------------------------
+ */
+
+function checkFoodCollisions(snakeHeadX,snakeHeadY) { // if the snake goes over the food, it will make the snake longer by 1
+    
+   if(snakeHeadX == food.x && snakeHeadY == food.y) { // check if the snake head is colliding with the food
+        snake.push({
+            x: 0,
+            y:0
+        });
+        snakeLength++; // this changes the snake length by 1
+        setFoodPosition(); // Change the position of the food
+    }
 }
