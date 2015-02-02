@@ -17,16 +17,19 @@ var context; //
 var screenWidth; // store width of our screen
 var screenHeight; // store the height of our screen so we have access to them
 
+var gameState;
+var gameOverMenu;
+
 /* -------------------------------------------------------------------------
  * Executing Game Code
  * -------------------------------------------------------------------------
- */ 
+ */
 
 gameInitialize(); // This executes the function gameInitalize without arguements.
 snakeInitialize();
 foodInitialize();
 //gameLoop run at a set interval over and over again
-setInterval(gameLoop, 1000/30);
+setInterval(gameLoop, 1000 / 30);
 
 // functions are a way to perform actions in our code at certain period of
 // time in our code
@@ -50,23 +53,28 @@ function gameInitialize() { // this function starts the game.
     // to make sure that the whole canvas is the whole screen
     canvas.width = screenWidth; // stores the screen width in canvas.width
     canvas.height = screenHeight; // stores the screen height in canvas.height
-    
+
     // use keydown event (if the key has been pressed)
     document.addEventListener("keydown", keyboardHandler);
     
+    gameOverMenu = document.getElementById("gameOver");
+    centerMenuPosition(gameOverMenu);
+    
+    setState("PLAY");
+
 }
 //calling extra function in here
 function gameLoop() // this function runs the game at all times.
 {
     //background being drawn, snake position being updated, snake being drawn on the screen
     gameDraw();
-    snakeUpdate();
-    snakeDraw();
-    
-    foodDraw();
-
-   
+    if (gameState == "PLAY") {
+        snakeUpdate();
+        snakeDraw();
+        foodDraw();
+    }
 }
+
 // draw our game
 function gameDraw()// this function draws the game.
 {
@@ -74,22 +82,22 @@ function gameDraw()// this function draws the game.
     context.fillRect(0, 0, screenWidth, screenHeight); // This makes a rectangle from X = 0 and Y = 0 with the width of screenWidth and the height of screenHeight.
 }
 //initialize all the variables for the snake and setting to values and modify later
-function snakeInitialize(){
+function snakeInitialize() {
     snake = [];
     snakeLength = 5; //length of snake 15 block wide
     snakeSize = 20; // size of our snake is 20 pixels
     snakeDirection = "down"; // tell the game which direction of our snake is moving
-    
-    for(var index = snakeLength-1; index >= 0; index--) {
-        snake.push( {
-                x: index,
-                y: 0
-            });       
+
+    for (var index = snakeLength - 1; index >= 0; index--) {
+        snake.push({
+            x: index,
+            y: 0
+        });
     }
 }
 //anything has to do with drawing the snake
-function snakeDraw(){
-    for(var index = 0; index < snake.length; index++) {
+function snakeDraw() {
+    for (var index = 0; index < snake.length; index++) {
         context.fillStyle = "white";
         // fill x and y position and the size of the snake
         context.fillRect(snake[index].x * snakeSize, snake[index].y * snakeSize, snakeSize, snakeSize);
@@ -101,21 +109,23 @@ function snakeUpdate() {
     var snakeHeadY = snake[0].y;
     //moving snake to the right by increasing the x-position by 1
     //conditional statement (if) determine if we go up or down
-    if(snakeDirection == "down") { // check if snake is going down
+    if (snakeDirection == "down") { // check if snake is going down
         snakeHeadY++; // snake position moves down
     }
-    else if(snakeDirection == "right"){ // check if snake is going right
+    else if (snakeDirection == "right") { // check if snake is going right
         snakeHeadX++; // snake position moves to the right
     }
-    else if(snakeDirection == "up"){ // check if snake is going up
+    else if (snakeDirection == "up") { // check if snake is going up
         snakeHeadY--; // snake position moves up
     }
-    else if(snakeDirection == "left"){ // check if snake is going left
+    else if (snakeDirection == "left") { // check if snake is going left
         snakeHeadX--; // snake position moves to the left
     }
-    checkFoodCollisions(snakeHeadX,snakeHeadY);
+    checkFoodCollisions(snakeHeadX, snakeHeadY);
     //asking a program a question(comparing the variable to the string)
     //remove element in the array and store in snaketail
+    checkFoodCollisions(snakeHeadX, snakeHeadY);
+    checkWallCollisions(snakeHeadX, snakeHeadY);
     var snakeTail = snake.pop();
     snakeTail.x = snakeHeadX;
     snakeTail.y = snakeHeadY;
@@ -148,13 +158,13 @@ function setFoodPosition() {
     //creating a random number from 0 to screenWidth and screenHeight
     //Math.floor gives the nearest integer (no decimal)
     var randomX = Math.floor(Math.random() * screenWidth);
-    var randomY =  Math.floor(Math.random() * screenHeight);
-    
+    var randomY = Math.floor(Math.random() * screenHeight);
+
     //set the position of the food using randomX and randomY
     //randomX to food.x(food.x is the acutal position of the food)
     //set random position of the x and y-axis
-    food.x = Math.floor (randomX / snakeSize);
-    food.y = Math.floor (randomY / snakeSize);
+    food.x = Math.floor(randomX / snakeSize);
+    food.y = Math.floor(randomY / snakeSize);
 }
 
 
@@ -165,34 +175,81 @@ function setFoodPosition() {
 //for handling keyboard event
 function keyboardHandler(event) { // this functions runs if the player presses the keyboard
     console.log(event);
-    
+
     if (event.keyCode == "39") { // if the user presses a right button, then the player will be right
         snakeDirection = "right";
     }
-    else if(event.keyCode == "40") { // if the user presses a down button, then the player will be down 
+    else if (event.keyCode == "40") { // if the user presses a down button, then the player will be down 
         snakeDirection = "down";
     }
-    else if(event.keyCode == "38") { // if the user presses a up, then the player will be up
+    else if (event.keyCode == "38") { // if the user presses a up, then the player will be up
         snakeDirection = "up";
     }
     else if (event.keyCode == "37") { // if the user presses a left button, then the player will be left
         snakeDirection = "left";
     }
-} 
+}
 
 /* --------------------------------------------------------------------
  * Collision Handling
  * --------------------------------------------------------------------
  */
 
-function checkFoodCollisions(snakeHeadX,snakeHeadY) { // if the snake goes over the food, it will make the snake longer by 1
-    
-   if(snakeHeadX == food.x && snakeHeadY == food.y) { // check if the snake head is colliding with the food
+function checkFoodCollisions(snakeHeadX, snakeHeadY) { // if the snake goes over the food, it will make the snake longer by 1
+    if (snakeHeadX == food.x && snakeHeadY == food.y) { // check if the snake head is colliding with the food
         snake.push({
             x: 0,
-            y:0
+            y: 0
         });
         snakeLength++; // this changes the snake length by 1
         setFoodPosition(); // Change the position of the food
     }
+}
+
+function checkWallCollisions(snakeHeadX, snakeHeadY) {
+    if (snakeHeadX * snakeSize >= screenWidth || snakeHeadX * snakeSize < 0) {
+        setState("GAME-OVER");
+    }
+
+}
+/*------------------------------------------------------------------------------
+ * Game State Handling 
+ * ----------------------------------------------------------------------------
+ */
+
+function setState(state) {
+    gameState = state;
+    showMenu(state);
+}
+/*----------------------------------------------------------------------------
+ * Menu Functions
+ * 
+ */
+function displayMenu(menu) {
+    menu.style.visibility = "visible";
+}
+
+function showMenu(state) {
+    if (state == "GAME OVER") {
+        displayMenu(gameOverMenu);
+    }
+}
+
+function setState(state) {
+    gameState = state;
+    showMenu(state);
+}
+
+function displayMenu(menu) {
+    menu.style.visibility = "visible";
+}
+
+function showMenu(state) {
+    if(state == "GAMEOVER") {
+        displayMenu(gameOverMenu);
+    }
+}
+
+function centerMenuPosition(menu) {
+    menu.style.top = (screenHeight / 2) + "px";
 }
