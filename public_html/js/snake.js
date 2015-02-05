@@ -19,6 +19,7 @@ var screenHeight; // store the height of our screen so we have access to them
 
 var gameState;
 var gameOverMenu;
+var restartButton;
 
 /* -------------------------------------------------------------------------
  * Executing Game Code
@@ -60,6 +61,9 @@ function gameInitialize() { // this function starts the game.
     gameOverMenu = document.getElementById("gameOver");
     centerMenuPosition(gameOverMenu);
     
+    restartButton = document.getElementById("restartButton");
+    restartButton.addEventListener("click", gameRestart);
+    
     setState("PLAY");
 
 }
@@ -81,10 +85,17 @@ function gameDraw()// this function draws the game.
     context.fillStyle = "rgb(180, 250, 213)"; // this fills the canvas with a ligh blue color.
     context.fillRect(0, 0, screenWidth, screenHeight); // This makes a rectangle from X = 0 and Y = 0 with the width of screenWidth and the height of screenHeight.
 }
+
+function gameRestart() {
+    snakeInitialize();
+    foodInitialize();
+    hideMenu(gameOverMenu);
+    setState("PLAY");
+}
 //initialize all the variables for the snake and setting to values and modify later
 function snakeInitialize() {
     snake = [];
-    snakeLength = 5; //length of snake 15 block wide
+    snakeLength = 1; //length of snake 15 block wide
     snakeSize = 20; // size of our snake is 20 pixels
     snakeDirection = "down"; // tell the game which direction of our snake is moving
 
@@ -126,6 +137,7 @@ function snakeUpdate() {
     //remove element in the array and store in snaketail
     checkFoodCollisions(snakeHeadX, snakeHeadY);
     checkWallCollisions(snakeHeadX, snakeHeadY);
+    checkSnakeCollisions(snakeHeadX, snakeHeadY);
     var snakeTail = snake.pop();
     snakeTail.x = snakeHeadX;
     snakeTail.y = snakeHeadY;
@@ -208,9 +220,19 @@ function checkFoodCollisions(snakeHeadX, snakeHeadY) { // if the snake goes over
 
 function checkWallCollisions(snakeHeadX, snakeHeadY) {
     if (snakeHeadX * snakeSize >= screenWidth || snakeHeadX * snakeSize < 0) {
-        setState("GAME-OVER");
+        setState("GAME OVER");
     }
 
+}
+
+function checkSnakeCollisions(snakeHeadX, snakeHeadY) {
+   for(var index = 1; index < snake.length; index++) {
+       if(snakeHeadX == snake[index].x && snakeHeadY == snake[index].y) {
+           setState("GAME OVER");
+           return;
+       }
+   }
+    
 }
 /*------------------------------------------------------------------------------
  * Game State Handling 
@@ -223,10 +245,14 @@ function setState(state) {
 }
 /*----------------------------------------------------------------------------
  * Menu Functions
- * 
+ * -------------------- ------------------------------------------------------
  */
 function displayMenu(menu) {
     menu.style.visibility = "visible";
+}
+
+function hideMenu(menu) {
+    menu.style.visibility = "hidden";
 }
 
 function showMenu(state) {
@@ -235,21 +261,7 @@ function showMenu(state) {
     }
 }
 
-function setState(state) {
-    gameState = state;
-    showMenu(state);
-}
-
-function displayMenu(menu) {
-    menu.style.visibility = "visible";
-}
-
-function showMenu(state) {
-    if(state == "GAMEOVER") {
-        displayMenu(gameOverMenu);
-    }
-}
-
 function centerMenuPosition(menu) {
-    menu.style.top = (screenHeight / 2) + "px";
+    menu.style.top = (screenHeight / 2) - (menu.offsetHeight / 2) + "px";
+    menu.style.left= (screenWidth / 2) - (menu.offsetWidth / 2) + "px";
 }

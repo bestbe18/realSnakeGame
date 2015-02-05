@@ -12,22 +12,23 @@ body{
     visibility: hidden;
 }
 
-h1, h3 {
+h1, h3 { //change the fonts of h1 and h3 to the Google fonts, centered and white color 
     font-family: 'Permanent Marker', cursive;
     color: white;
-    text-allign: center;
+    text-align: center;
 }
 
 .title {
-    font-size: 62px;
+    font-size: 62px; // Make the font size 62 pixels
     margin-bottom: 0px;
+    margin-top: 0px;
 }
 
 #restartButton {
     border: 2px solid white;
-    border-radius: 10px;
+    border-radius: 10px; // Make the corners rounded
 }
-#restartButton: hover {
+#restartButton:hover {
     background-color: #009900;
 
 }
