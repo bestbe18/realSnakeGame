@@ -7,12 +7,12 @@ body{
     display: block; // set color to the whole screen
 }
 
-#gameOver {
+#gameOver, #playHUD {
     position: absolute;
     visibility: hidden;
 }
 
-h1, h3 { //change the fonts of h1 and h3 to the Google fonts, centered and white color 
+h1, h2, h3 { //change the fonts of h1 and h3 to the Google fonts, centered and white color 
     font-family: 'Permanent Marker', cursive;
     color: white;
     text-align: center;
@@ -31,4 +31,8 @@ h1, h3 { //change the fonts of h1 and h3 to the Google fonts, centered and white
 #restartButton:hover {
     background-color: #009900;
 
+}
+
+#scoreboard {
+    margin: 0px;
 }
