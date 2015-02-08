@@ -66,8 +66,8 @@ function gameInitialize() { // this function starts the game.
     restartButton = document.getElementById("restartButton");
     restartButton.addEventListener("click", gameRestart);
     
-    playHUD = document.getElementById("playHUD");
-    scoreboard = document.getElementById("scoreboard");
+    playHUD = document.getElementById("playHUD"); //this puts in playHud the ID for the text "playHUD"
+    scoreboard = document.getElementById("scoreboard"); //this gets the element Id of "scoreboard" into the variable scoreboard
     
     setState("PLAY");
 
@@ -182,6 +182,7 @@ function setFoodPosition() {
     //randomX to food.x(food.x is the acutal position of the food)
     //set random position of the x and y-axis
     food.x = Math.floor(randomX / snakeSize);
+    //convert food position to snake grid
     food.y = Math.floor(randomY / snakeSize);
 }
 
@@ -193,6 +194,8 @@ function setFoodPosition() {
 //for handling keyboard event
 function keyboardHandler(event) { // this functions runs if the player presses the keyboard
     console.log(event);
+    //&& logical operators
+    //check to see if we press the right key and snakeDirection is not to the left
 
     if (event.keyCode == "39") { // if the user presses a right button, then the player will be right
         snakeDirection = "right";
@@ -203,16 +206,19 @@ function keyboardHandler(event) { // this functions runs if the player presses t
     else if (event.keyCode == "38") { // if the user presses a up, then the player will be up
         snakeDirection = "up";
     }
+    // make sure when we press down, the up key does not work
     else if (event.keyCode == "37") { // if the user presses a left button, then the player will be left
         snakeDirection = "left";
     }
 }
-
+//*scope of the variabl(snakeHeadX exist only in a function
 /* --------------------------------------------------------------------
  * Collision Handling
  * --------------------------------------------------------------------
  */
-
+//check to see if the snakeHead collide with the food
+//check the head of x and food.x positions are the same
+//**When we create a function, we take in argument as paraameters
 function checkFoodCollisions(snakeHeadX, snakeHeadY) { // if the snake goes over the food, it will make the snake longer by 1
     if (snakeHeadX == food.x && snakeHeadY == food.y) { // check if the snake head is colliding with the food
         snake.push({
@@ -225,13 +231,15 @@ function checkFoodCollisions(snakeHeadX, snakeHeadY) { // if the snake goes over
 }
 
 function checkWallCollisions(snakeHeadX, snakeHeadY) {
+    //check to see if the snakeHeadX is greater than the size of the screen
+    // check to see if either one is true to execute the code
     if (snakeHeadX * snakeSize >= screenWidth || snakeHeadX * snakeSize < 0) {
         setState("GAME OVER");
     }
 
 }
 
-function checkSnakeCollisions(snakeHeadX, snakeHeadY) {
+function checkSnakeCollisions(snakeHeadX, snakeHeadY) { //if the snake collides with itself, then the game is over
    for(var index = 1; index < snake.length; index++) {
        if(snakeHeadX == snake[index].x && snakeHeadY == snake[index].y) {
            setState("GAME OVER");
@@ -244,37 +252,47 @@ function checkSnakeCollisions(snakeHeadX, snakeHeadY) {
  * Game State Handling 
  * ----------------------------------------------------------------------------
  */
-
+//set the state of our game
+//call the function, tell them what state we're in and set it to gameState
 function setState(state) {
+    // reference to the variable gameState by passing in the argument
     gameState = state;
+    //show the menu for game over
     showMenu(state);
 }
 /*----------------------------------------------------------------------------
  * Menu Functions
  * -------------------- ------------------------------------------------------
  */
+
+//this function display from hidden to visible
+//menu argument is currently INVISIBLE
 function displayMenu(menu) {
+    // change its visibility to visible able to see it again 
     menu.style.visibility = "visible";
 }
 
-function hideMenu(menu) {
+function hideMenu(menu) { //this hides the menu text
     menu.style.visibility = "hidden";
 }
 
 function showMenu(state) {
+    //if the game is over than display the gameOverMenu
     if (state == "GAME OVER") {
         displayMenu(gameOverMenu);
     }
-    else if(state == "PLAY") {
+    else if(state == "PLAY") { //if not, continue to play and display the playHUD score
         displayMenu(playHUD);
     }
 }
 
 function centerMenuPosition(menu) {
+    //modify the position of the top by divide it by two and concatenate
+    //top is the actual position of the top browser
     menu.style.top = (screenHeight / 2) - (menu.offsetHeight / 2) + "px";
     menu.style.left= (screenWidth / 2) - (menu.offsetWidth / 2) + "px";
 }
 
-function drawScoreboard() {
+function drawScoreboard() { //draws the socreboard with points that are the length of the snake
     scoreboard.innerHTML = "Length: "  + snakeLength;
 }
